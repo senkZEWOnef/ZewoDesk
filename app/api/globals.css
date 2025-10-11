@@ -1,0 +1,15 @@
+/* app/globals.css */
+:root {
+  color-scheme: light dark;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+input,
+button {
+  padding: 6px 8px;
+}

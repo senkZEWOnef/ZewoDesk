@@ -1,0 +1,119 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  description      String?
+  liveUrl          String?
+  repoFullName     String? // e.g. "senkZEWOnef/spaces"
+  deployProvider   String? // 'netlify' | 'render' | 'vercel' | 'amplify' | 'other'
+  deployExternalId String?
+  visibility       String   @default("private")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  status   ProjectStatus?
+  docs     ProjectDocs?
+  events   IntegrationEvent[]
+  signups  ProjectSignup[]
+  invoices Invoice[]
+  expenses Expense[]
+}
+
+model ProjectDocs {
+  projectId       String   @id
+  readmeMd        String?
+  notesMd         String   @default("")
+  brainstormingMd String   @default("")
+  updatedAt       DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectStatus {
+  projectId       String    @id
+  lastCommitSha   String?
+  lastCommitAt    DateTime?
+  lastDeployId    String?
+  lastDeployState String?
+  lastDeployAt    DateTime?
+  uptimePct       Decimal?  @db.Decimal(5, 2)
+  updatedAt       DateTime  @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model IntegrationEvent {
+  id         BigInt   @id @default(autoincrement())
+  projectId  String
+  source     String
+  type       String
+  payload    Json
+  occurredAt DateTime @default(now())
+  indexedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, occurredAt(sort: Desc)])
+}
+
+model Client {
+  id      String          @id @default(cuid())
+  name    String
+  email   String?         @unique
+  signups ProjectSignup[]
+}
+
+model ProjectSignup {
+  id         BigInt   @id @default(autoincrement())
+  projectId  String
+  clientId   String?
+  email      String?
+  meta       Json?
+  signedUpAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  client  Client? @relation(fields: [clientId], references: [id])
+}
+
+model Invoice {
+  id              String    @id @default(cuid())
+  projectId       String
+  title           String?
+  amountCents     Int
+  status          String    @default("draft") // 'draft'|'sent'|'paid'|'void'
+  stripeInvoiceId String?
+  issuedAt        DateTime?
+  paidAt          DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Expense {
+  id          BigInt   @id @default(autoincrement())
+  projectId   String
+  description String
+  amountCents Int
+  category    String?
+  incurredAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ExternalConnection {
+  id           String   @id @default(cuid())
+  provider     String
+  accountLabel String?
+  oauthMeta    Json?
+  createdAt    DateTime @default(now())
+}
