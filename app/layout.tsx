@@ -3,7 +3,7 @@ import "./globals.css";
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Developer Command Center",
+  title: "Zewo's Desk",
   description: "One pane of glass for all your apps.",
 };
 
@@ -31,9 +31,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               fontWeight: "bold",
               fontSize: "16px"
             }}>
-              D
+              Z
             </div>
-            <strong style={{ fontSize: "18px", fontWeight: "600" }}>Dev Console</strong>
+            <strong style={{ fontSize: "18px", fontWeight: "600" }}>Zewo's Desk</strong>
           </div>
           <nav style={{ display: "flex", gap: "24px" }}>
             <a href="/" style={{ fontSize: "14px", fontWeight: "500" }}>Dashboard</a>

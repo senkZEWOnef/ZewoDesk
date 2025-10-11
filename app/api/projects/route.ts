@@ -8,7 +8,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  console.log('POST /api/projects called');
   const contentType = request.headers.get("content-type") || "";
+  console.log('Content-Type:', contentType);
+  
   let data: any = {};
   if (contentType.includes("application/json")) {
     data = await request.json();
@@ -18,6 +21,8 @@ export async function POST(request: Request) {
   } else {
     data = await request.json().catch(() => ({}));
   }
+  
+  console.log('Received data:', data);
 
   const { name, slug, liveUrl, repoFullName } = data;
   if (!name || !slug)
@@ -26,17 +31,32 @@ export async function POST(request: Request) {
       { status: 400 }
     );
 
+  // Ensure liveUrl has protocol if provided
+  let processedLiveUrl = liveUrl || null;
+  if (processedLiveUrl && !processedLiveUrl.startsWith('http://') && !processedLiveUrl.startsWith('https://')) {
+    processedLiveUrl = `https://${processedLiveUrl}`;
+  }
+
   // Create the project
+  console.log('Creating project with data:', {
+    name,
+    slug,
+    liveUrl: processedLiveUrl,
+    repoFullName: repoFullName || null
+  });
+  
   const project = await prisma.project.create({
     data: {
       name,
       slug,
-      liveUrl: liveUrl || null,
+      liveUrl: processedLiveUrl,
       repoFullName: repoFullName || null,
       status: { create: {} },
       docs: { create: {} },
     },
   });
+  
+  console.log('Project created successfully:', project.id);
 
   // If GitHub repo provided, fetch initial data
   if (repoFullName) {

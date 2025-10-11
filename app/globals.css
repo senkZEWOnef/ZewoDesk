@@ -110,8 +110,8 @@ button:hover {
   transform: scaleX(1);
 }
 
-.project-card:hover button {
-  opacity: 1;
+.project-card:hover .project-actions {
+  opacity: 1 !important;
 }
 
 .project-header {
@@ -157,12 +157,15 @@ button:hover {
   border-radius: 6px;
   font-size: 13px;
   border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--accent-blue);
 }
 
 .project-link:hover {
   background: var(--bg-secondary);
   border-color: var(--border-hover);
-  text-decoration: none;
+  color: var(--accent-green);
 }
 
 .status-indicator {
@@ -196,3 +199,25 @@ button:hover {
 .project-card:nth-child(2) { animation-delay: 0.2s; }
 .project-card:nth-child(3) { animation-delay: 0.3s; }
 .project-card:nth-child(4) { animation-delay: 0.4s; }
+
+.project-card-with-preview {
+  min-height: 280px;
+}
+
+.project-card-with-preview .project-title {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-weight: 700;
+}
+
+.project-card-with-preview .project-slug {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 4px rgba(0, 0, 0, 0.9);
+  font-weight: 600;
+}
+
+.project-card-with-preview .project-stats {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-weight: 500;
+}

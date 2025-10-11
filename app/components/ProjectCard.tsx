@@ -10,6 +10,7 @@ interface ProjectCardProps {
     slug: string;
     repoFullName: string | null;
     liveUrl: string | null;
+    previewImage: string | null;
     status: {
       lastCommitAt: Date | null;
       lastDeployAt: Date | null;
@@ -20,6 +21,35 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+  const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false);
+
+  const handleGenerateScreenshot = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!project.liveUrl) {
+      alert("Project needs a live URL to generate screenshot");
+      return;
+    }
+
+    setIsGeneratingScreenshot(true);
+    try {
+      const response = await fetch(`/api/projects/${project.slug}/screenshot`, {
+        method: "POST"
+      });
+      
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert("Failed to generate screenshot");
+      }
+    } catch (error) {
+      console.error("Screenshot generation failed:", error);
+      alert("Failed to generate screenshot");
+    } finally {
+      setIsGeneratingScreenshot(false);
+    }
+  };
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,39 +75,89 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <Link href={`/projects/${project.slug}`} style={{ textDecoration: "none" }}>
-      <article className="project-card" style={{ position: "relative" }}>
-        <button
-          onClick={handleDelete}
-          style={{
-            position: "absolute",
-            top: "12px",
-            right: "12px",
-            background: "transparent",
-            border: "1px solid var(--border)",
-            color: "var(--text-muted)",
-            borderRadius: "4px",
-            width: "24px",
-            height: "24px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            fontSize: "12px",
-            opacity: 0,
-            transition: "all 0.2s ease"
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "var(--accent-red)";
-            e.currentTarget.style.color = "var(--accent-red)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--border)";
-            e.currentTarget.style.color = "var(--text-muted)";
-          }}
-          title="Delete project"
-        >
-          ×
-        </button>
+      <article 
+        className={`project-card ${project.previewImage ? 'project-card-with-preview' : ''}`}
+        style={{ 
+          position: "relative",
+          ...(project.previewImage && {
+            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${project.previewImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'top center',
+            color: '#ffffff'
+          })
+        }}
+      >
+        <div style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          display: "flex",
+          gap: "8px",
+          opacity: 0.3,
+          transition: "all 0.2s ease"
+        }} className="project-actions">
+          {project.liveUrl && (
+            <button
+              onClick={handleGenerateScreenshot}
+              disabled={isGeneratingScreenshot}
+              style={{
+                background: "transparent",
+                border: "1px solid var(--border)",
+                color: project.previewImage ? "var(--text-muted)" : "var(--accent-blue)",
+                borderRadius: "4px",
+                width: "24px",
+                height: "24px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: isGeneratingScreenshot ? "not-allowed" : "pointer",
+                fontSize: "12px",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                if (!isGeneratingScreenshot) {
+                  e.currentTarget.style.borderColor = "var(--accent-blue)";
+                  e.currentTarget.style.color = "var(--accent-blue)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.color = project.previewImage ? "var(--text-muted)" : "var(--accent-blue)";
+              }}
+              title={isGeneratingScreenshot ? "Generating..." : "Generate screenshot"}
+            >
+              {isGeneratingScreenshot ? "⏳" : "📸"}
+            </button>
+          )}
+          <button
+            onClick={handleDelete}
+            style={{
+              background: "transparent",
+              border: "1px solid var(--border)",
+              color: "var(--text-muted)",
+              borderRadius: "4px",
+              width: "24px",
+              height: "24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "12px",
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "var(--accent-red)";
+              e.currentTarget.style.color = "var(--accent-red)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "var(--border)";
+              e.currentTarget.style.color = "var(--text-muted)";
+            }}
+            title="Delete project"
+          >
+            ×
+          </button>
+        </div>
         
         <div className="project-header">
           <div>
@@ -100,28 +180,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         <div className="project-links">
           {project.repoFullName && (
-            <a 
-              href={`https://github.com/${project.repoFullName}`} 
-              target="_blank" 
-              rel="noreferrer"
+            <div 
               className="project-link"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(`https://github.com/${project.repoFullName}`, '_blank');
+              }}
             >
               <span>📁</span>
               {project.repoFullName}
-            </a>
+            </div>
           )}
           {project.liveUrl && (
-            <a 
-              href={project.liveUrl} 
-              target="_blank" 
-              rel="noreferrer"
+            <div 
               className="project-link"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(project.liveUrl!, '_blank');
+              }}
             >
               <span>🌐</span>
               Live Site
-            </a>
+            </div>
           )}
         </div>
       </article>
