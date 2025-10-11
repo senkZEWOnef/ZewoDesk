@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import MetaTabs from "./components/MetaTabs";
 
+export const dynamic = 'force-dynamic';
+
 export default async function MetaPage() {
   // Get all analytics data
   const [projects, totalEvents, recentEvents, invoices, expenses] = await Promise.all([

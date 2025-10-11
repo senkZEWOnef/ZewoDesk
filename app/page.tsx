@@ -2,6 +2,8 @@
 import { prisma } from "@/lib/prisma";
 import ProjectCard from "./components/ProjectCard";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   const projects = await prisma.project.findMany({
     include: { status: true },

@@ -5,6 +5,8 @@ import Link from "next/link";
 import ProjectTabs from "./components/ProjectTabs";
 import DeleteButton from "./components/DeleteButton";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await prisma.project.findUnique({
