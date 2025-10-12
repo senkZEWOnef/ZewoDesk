@@ -10,12 +10,15 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body>
         <header style={{ 
           display: "flex", 
           justifyContent: "space-between", 
           alignItems: "center",
-          padding: "24px 32px",
+          padding: "16px 24px",
           borderBottom: "1px solid var(--border)",
           background: "var(--bg-secondary)"
         }}>
@@ -33,14 +36,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             }}>
               Z
             </div>
-            <strong style={{ fontSize: "18px", fontWeight: "600" }}>Zewo's Desk</strong>
+            <strong style={{ fontSize: "18px", fontWeight: "600" }} className="brand-text">Zewo's Desk</strong>
           </a>
-          <nav style={{ display: "flex", gap: "24px" }}>
+          <nav style={{ display: "flex", gap: "24px" }} className="desktop-nav">
             <a href="/" style={{ fontSize: "14px", fontWeight: "500" }}>Dashboard</a>
             <a href="/meta" style={{ fontSize: "14px", fontWeight: "500" }}>Meta</a>
           </nav>
+          <nav style={{ display: "none", gap: "16px" }} className="mobile-nav">
+            <a href="/" style={{ fontSize: "12px", fontWeight: "500" }}>Home</a>
+            <a href="/meta" style={{ fontSize: "12px", fontWeight: "500" }}>Meta</a>
+          </nav>
         </header>
-        <main style={{ padding: "32px" }}>
+        <main style={{ padding: "32px" }} className="main-content">
           {children}
         </main>
       </body>

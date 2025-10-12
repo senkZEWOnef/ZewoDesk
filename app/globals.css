@@ -77,6 +77,14 @@ button:hover {
   margin-top: 24px;
 }
 
+@media (max-width: 768px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+}
+
 .project-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -220,4 +228,135 @@ button:hover {
   color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   font-weight: 500;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 16px !important;
+  }
+  
+  .desktop-nav {
+    display: none !important;
+  }
+  
+  .mobile-nav {
+    display: flex !important;
+  }
+  
+  .brand-text {
+    display: none;
+  }
+  
+  .project-card {
+    padding: 16px;
+    margin: 0 4px;
+  }
+  
+  .project-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .project-stats {
+    text-align: left;
+    font-size: 11px;
+  }
+  
+  .project-links {
+    gap: 8px;
+    margin-top: 12px;
+  }
+  
+  .project-link {
+    padding: 6px 10px;
+    font-size: 12px;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  
+  .project-title {
+    font-size: 18px;
+  }
+  
+  .project-slug {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px !important;
+  }
+  
+  .project-form {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .project-card {
+    padding: 12px;
+    margin: 0 2px;
+  }
+  
+  .project-title {
+    font-size: 16px;
+  }
+  
+  .project-links {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .project-link {
+    width: 100%;
+  }
+}
+
+/* Form responsive styles */
+@media (max-width: 768px) {
+  .page-header {
+    margin-bottom: 24px !important;
+    text-align: center;
+  }
+  
+  .page-title {
+    font-size: 24px !important;
+  }
+  
+  .page-description {
+    font-size: 14px !important;
+  }
+  
+  .project-form {
+    padding: 16px !important;
+    margin-bottom: 24px !important;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    margin-bottom: 16px !important;
+  }
+  
+  .page-title {
+    font-size: 20px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .page-description {
+    font-size: 13px !important;
+  }
 }

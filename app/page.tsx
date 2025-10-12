@@ -24,7 +24,7 @@ export default async function Page() {
 
   return (
     <>
-      <div style={{ marginBottom: "32px" }}>
+      <div style={{ marginBottom: "32px" }} className="page-header">
         <h1 style={{ 
           fontSize: "32px", 
           fontWeight: "700", 
@@ -33,10 +33,10 @@ export default async function Page() {
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text"
-        }}>
+        }} className="page-title">
           Projects
         </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "16px" }}>
+        <p style={{ color: "var(--text-secondary)", fontSize: "16px" }} className="page-description">
           Manage all your projects from one place
         </p>
       </div>
@@ -65,13 +65,13 @@ export default async function Page() {
           borderRadius: "12px",
           border: "1px solid var(--border)",
           marginBottom: "32px"
-        }}>
+        }} className="project-form">
           <h3 style={{ marginBottom: "16px", fontSize: "18px", fontWeight: "600" }}>Add New Project</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }} className="form-row">
             <input name="name" placeholder="Project Name" required />
             <input name="slug" placeholder="project-slug" required />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }} className="form-row">
             <input name="repoFullName" placeholder="username/repo-name (GitHub)" />
             <input name="liveUrl" placeholder="https://app.example.com" />
           </div>
