@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           borderBottom: "1px solid var(--border)",
           background: "var(--bg-secondary)"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <a href="/" style={{ display: "flex", alignItems: "center", gap: "12px", textDecoration: "none", color: "inherit" }}>
             <div style={{ 
               width: "32px", 
               height: "32px", 
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               Z
             </div>
             <strong style={{ fontSize: "18px", fontWeight: "600" }}>Zewo's Desk</strong>
-          </div>
+          </a>
           <nav style={{ display: "flex", gap: "24px" }}>
             <a href="/" style={{ fontSize: "14px", fontWeight: "500" }}>Dashboard</a>
             <a href="/meta" style={{ fontSize: "14px", fontWeight: "500" }}>Meta</a>
