@@ -10,13 +10,14 @@ const PROJECTS_PER_PAGE = 12;
 export default async function ProjectsPage({ 
   searchParams 
 }: { 
-  searchParams: { page?: string } 
+  searchParams: Promise<{ page?: string }> 
 }) {
   let projects = [];
   let totalProjects = 0;
   let error = null;
   
-  const currentPage = parseInt(searchParams.page || '1');
+  const resolvedSearchParams = await searchParams;
+  const currentPage = parseInt(resolvedSearchParams.page || '1');
   const skip = (currentPage - 1) * PROJECTS_PER_PAGE;
   
   try {
