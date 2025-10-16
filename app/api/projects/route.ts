@@ -24,12 +24,21 @@ export async function POST(request: Request) {
   
   console.log('Received data:', data);
 
-  const { name, slug, liveUrl, repoFullName } = data;
+  const { name, slug, liveUrl, repoFullName, completionPct } = data;
   if (!name || !slug)
     return NextResponse.json(
       { error: "name and slug required" },
       { status: 400 }
     );
+
+  // Validate completion percentage
+  let validCompletionPct = 0;
+  if (completionPct !== undefined && completionPct !== null && completionPct !== '') {
+    const pct = parseInt(completionPct);
+    if (!isNaN(pct) && pct >= 0 && pct <= 100) {
+      validCompletionPct = pct;
+    }
+  }
 
   // Ensure liveUrl has protocol if provided
   let processedLiveUrl = liveUrl || null;
@@ -42,7 +51,8 @@ export async function POST(request: Request) {
     name,
     slug,
     liveUrl: processedLiveUrl,
-    repoFullName: repoFullName || null
+    repoFullName: repoFullName || null,
+    completionPct: validCompletionPct
   });
   
   const project = await prisma.project.create({
@@ -51,6 +61,7 @@ export async function POST(request: Request) {
       slug,
       liveUrl: processedLiveUrl,
       repoFullName: repoFullName || null,
+      completionPct: validCompletionPct,
       status: { create: {} },
       docs: { create: {} },
     },

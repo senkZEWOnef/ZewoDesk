@@ -77,30 +77,11 @@ export default async function MetaPage() {
   };
 
   return (
-    <>
-      <div style={{ marginBottom: "32px" }}>
-        <h1 style={{ 
-          fontSize: "32px", 
-          fontWeight: "700", 
-          marginBottom: "8px",
-          background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text"
-        }}>
-          Meta Dashboard
-        </h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "16px" }}>
-          Analytics, health monitoring, and system settings
-        </p>
-      </div>
-
-      <MetaTabs 
-        analytics={analytics}
-        projects={projects}
-        invoices={invoices}
-        expenses={expenses}
-      />
-    </>
+    <MetaTabs 
+      analytics={analytics}
+      projects={projects}
+      invoices={invoices}
+      expenses={expenses}
+    />
   );
 }

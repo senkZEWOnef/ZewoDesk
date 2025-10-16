@@ -30,6 +30,49 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ s
   }
 }
 
+export async function PUT(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  try {
+    const { slug } = await params;
+    const data = await request.json();
+    
+    const { name, liveUrl, repoFullName, completionPct } = data;
+    
+    // Validate completion percentage
+    let validCompletionPct = 0;
+    if (completionPct !== undefined && completionPct !== null && completionPct !== '') {
+      const pct = parseInt(completionPct);
+      if (!isNaN(pct) && pct >= 0 && pct <= 100) {
+        validCompletionPct = pct;
+      }
+    }
+
+    // Ensure liveUrl has protocol if provided
+    let processedLiveUrl = liveUrl || null;
+    if (processedLiveUrl && !processedLiveUrl.startsWith('http://') && !processedLiveUrl.startsWith('https://')) {
+      processedLiveUrl = `https://${processedLiveUrl}`;
+    }
+
+    const project = await prisma.project.update({
+      where: { slug },
+      data: {
+        name: name || undefined,
+        liveUrl: processedLiveUrl,
+        repoFullName: repoFullName || null,
+        completionPct: validCompletionPct,
+      },
+      include: { status: true }
+    });
+
+    return NextResponse.json(project);
+  } catch (error) {
+    console.error("Failed to update project:", error);
+    return NextResponse.json(
+      { error: "Failed to update project" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { slug } = await params;

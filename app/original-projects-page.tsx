@@ -15,9 +15,8 @@ export default function LoginPage() {
     setError('');
 
     if (passcode === 'Poesie509$$$') {
-      // Store auth token in both localStorage and cookies
+      // Store auth token
       localStorage.setItem('zewo_auth', 'authenticated');
-      document.cookie = 'zewo_auth=authenticated; path=/; max-age=86400'; // 24 hours
       router.push('/dashboard');
     } else {
       setError('Invalid passcode');
