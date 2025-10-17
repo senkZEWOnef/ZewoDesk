@@ -19,6 +19,13 @@ const navigationButtons = [
     color: 'var(--accent-green)'
   },
   {
+    title: 'Supabase',
+    description: 'Backend as a service',
+    icon: '⚡',
+    url: 'https://supabase.com/dashboard',
+    color: 'var(--accent-green)'
+  },
+  {
     title: 'Netlify',
     description: 'Deploy and manage sites',
     icon: '🚀',

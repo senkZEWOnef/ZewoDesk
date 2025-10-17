@@ -12,7 +12,7 @@ interface ProjectCardProps {
     liveUrl: string | null;
     previewImage: string | null;
     completionPct: number | null;
-    status: {
+    ProjectStatus: {
       lastCommitAt: Date | null;
       lastDeployAt: Date | null;
       lastDeployState: string | null;
@@ -244,8 +244,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <div className="project-stats">
             <div>
-              <span className={`status-indicator ${project.status?.lastCommitAt ? 'status-active' : 'status-inactive'}`}></span>
-              {project.status?.lastCommitAt ? 'Active' : 'No commits'}
+              <span className={`status-indicator ${project.ProjectStatus?.lastCommitAt ? 'status-active' : 'status-inactive'}`}></span>
+              {project.ProjectStatus?.lastCommitAt ? 'Active' : 'No commits'}
             </div>
           </div>
         </div>
@@ -282,26 +282,29 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
         
         <div className="project-stats" style={{ marginBottom: "16px" }}>
-          <div>Last commit: {project.status?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-          <div>Last deploy: {project.status?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-          <div>Deploy state: {project.status?.lastDeployState ?? "—"}</div>
+          <div>Last commit: {project.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
+          <div>Last deploy: {project.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
+          <div>Deploy state: {project.ProjectStatus?.lastDeployState ?? "—"}</div>
         </div>
 
         {/* Edit Form */}
         {isEditing && (
-          <div style={{
-            background: "var(--bg-tertiary)",
-            padding: "16px",
-            borderRadius: "8px",
-            marginBottom: "16px",
-            border: "1px solid var(--border)"
-          }}>
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "var(--bg-tertiary)",
+              padding: "16px",
+              borderRadius: "8px",
+              marginBottom: "16px",
+              border: "1px solid var(--border)"
+            }}>
             <h4 style={{ marginBottom: "12px", fontSize: "14px", color: "var(--text-primary)" }}>Edit Project</h4>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <input
                 type="text"
                 value={editData.name}
                 onChange={(e) => setEditData({...editData, name: e.target.value})}
+                onClick={(e) => e.stopPropagation()}
                 placeholder="Project Name"
                 style={{ fontSize: "12px", padding: "8px" }}
               />
@@ -309,6 +312,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 type="text"
                 value={editData.repoFullName}
                 onChange={(e) => setEditData({...editData, repoFullName: e.target.value})}
+                onClick={(e) => e.stopPropagation()}
                 placeholder="GitHub repo (username/repo-name)"
                 style={{ fontSize: "12px", padding: "8px" }}
               />
@@ -316,6 +320,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 type="text"
                 value={editData.liveUrl}
                 onChange={(e) => setEditData({...editData, liveUrl: e.target.value})}
+                onClick={(e) => e.stopPropagation()}
                 placeholder="Live URL"
                 style={{ fontSize: "12px", padding: "8px" }}
               />
@@ -326,6 +331,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   max="100"
                   value={editData.completionPct}
                   onChange={(e) => setEditData({...editData, completionPct: parseInt(e.target.value) || 0})}
+                  onClick={(e) => e.stopPropagation()}
                   placeholder="0"
                   style={{ fontSize: "12px", padding: "8px", width: "60px" }}
                 />

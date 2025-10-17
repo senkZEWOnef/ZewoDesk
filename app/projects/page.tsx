@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import ProjectCard from "../components/ProjectCard";
 import PaginationControls from "../components/PaginationControls";
+import ProjectForm from "../components/ProjectForm";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,7 +28,7 @@ export default async function ProjectsPage({
     
     [projects, totalProjects] = await Promise.all([
       prisma.project.findMany({
-        include: { status: true },
+        include: { ProjectStatus: true },
         orderBy: { createdAt: "desc" },
         take: PROJECTS_PER_PAGE,
         skip: skip,
@@ -77,44 +78,7 @@ export default async function ProjectsPage({
         </div>
       )}
 
-      {!error && (
-        <form action="/api/projects" method="post" style={{ 
-          background: "var(--bg-secondary)",
-          padding: "24px",
-          borderRadius: "12px",
-          border: "1px solid var(--border)",
-          marginBottom: "32px"
-        }} className="project-form">
-          <h3 style={{ marginBottom: "16px", fontSize: "18px", fontWeight: "600" }}>Add New Project</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }} className="form-row">
-            <input name="name" placeholder="Project Name" required />
-            <input name="slug" placeholder="project-slug" required />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }} className="form-row">
-            <input name="repoFullName" placeholder="username/repo-name (GitHub)" />
-            <input name="liveUrl" placeholder="https://app.example.com" />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px", marginBottom: "16px" }} className="form-row">
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <label htmlFor="completionPct" style={{ color: "var(--text-secondary)", fontSize: "14px", minWidth: "120px" }}>
-                Completion: 
-              </label>
-              <input 
-                name="completionPct" 
-                id="completionPct"
-                type="number" 
-                min="0" 
-                max="100" 
-                defaultValue="0"
-                placeholder="0" 
-                style={{ width: "80px" }}
-              />
-              <span style={{ color: "var(--text-secondary)", fontSize: "14px" }}>%</span>
-            </div>
-          </div>
-          <button type="submit">Add Project</button>
-        </form>
-      )}
+      {!error && <ProjectForm />}
 
       <div className="project-grid">
         {projects.map(p => (

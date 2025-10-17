@@ -21,12 +21,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
       update: {
         ...(body.notesMd !== undefined && { notesMd: body.notesMd }),
         ...(body.brainstormingMd !== undefined && { brainstormingMd: body.brainstormingMd }),
+        ...(body.dbDiagramData !== undefined && { dbDiagramData: body.dbDiagramData }),
         updatedAt: new Date()
       },
       create: {
         projectId: project.id,
         notesMd: body.notesMd || "",
-        brainstormingMd: body.brainstormingMd || ""
+        brainstormingMd: body.brainstormingMd || "",
+        dbDiagramData: body.dbDiagramData || null
       }
     });
 

@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getLatestCommit, getReadme } from "@/lib/github";
+import { randomUUID } from "crypto";
 
 export async function GET() {
-  const projects = await prisma.project.findMany({ include: { status: true } });
+  const projects = await prisma.project.findMany({ include: { ProjectStatus: true } });
   return NextResponse.json(projects);
 }
 
@@ -57,13 +58,15 @@ export async function POST(request: Request) {
   
   const project = await prisma.project.create({
     data: {
+      id: randomUUID(),
       name,
       slug,
       liveUrl: processedLiveUrl,
       repoFullName: repoFullName || null,
       completionPct: validCompletionPct,
-      status: { create: {} },
-      docs: { create: {} },
+      updatedAt: new Date(),
+      ProjectStatus: { create: { updatedAt: new Date() } },
+      ProjectDocs: { create: { updatedAt: new Date() } },
     },
   });
   
@@ -101,5 +104,5 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.redirect(new URL("/", request.url));
+  return NextResponse.redirect(new URL("/projects", request.url));
 }

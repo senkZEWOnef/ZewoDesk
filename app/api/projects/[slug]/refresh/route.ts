@@ -9,7 +9,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     
     const project = await prisma.project.findUnique({
       where: { slug },
-      include: { status: true, docs: true }
+      include: { ProjectStatus: true, ProjectDocs: true }
     });
 
     if (!project) {

@@ -12,9 +12,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const project = await prisma.project.findUnique({
     where: { slug },
     include: { 
-      status: true, 
-      docs: true,
-      events: {
+      ProjectStatus: true, 
+      ProjectDocs: true,
+      IntegrationEvent: {
         orderBy: { occurredAt: "desc" },
         take: 10
       }
@@ -66,9 +66,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                 {project.slug}
               </span>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span className={`status-indicator ${project.status?.lastCommitAt ? 'status-active' : 'status-inactive'}`}></span>
+                <span className={`status-indicator ${project.ProjectStatus?.lastCommitAt ? 'status-active' : 'status-inactive'}`}></span>
                 <span style={{ fontSize: "14px", color: "var(--text-secondary)" }}>
-                  {project.status?.lastCommitAt ? 'Active' : 'No commits'}
+                  {project.ProjectStatus?.lastCommitAt ? 'Active' : 'No commits'}
                 </span>
               </div>
             </div>
@@ -114,15 +114,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
               <div style={{ marginBottom: "8px" }}>
                 <strong>Last Commit:</strong><br />
-                {project.status?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "Never"}
+                {project.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "Never"}
               </div>
               <div style={{ marginBottom: "8px" }}>
                 <strong>Last Deploy:</strong><br />
-                {project.status?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "Never"}
+                {project.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "Never"}
               </div>
               <div>
                 <strong>Deploy State:</strong><br />
-                {project.status?.lastDeployState ?? "Unknown"}
+                {project.ProjectStatus?.lastDeployState ?? "Unknown"}
               </div>
             </div>
           </div>

@@ -7,90 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Project {
-  id               String             @id @default(cuid())
-  slug             String             @unique
-  name             String
-  description      String?
-  liveUrl          String?
-  repoFullName     String?
-  deployProvider   String?
-  deployExternalId String?
-  visibility       String             @default("private")
-  completionPct    Int?               @default(0)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  previewImage     String?
-  expenses         Expense[]
-  events           IntegrationEvent[]
-  invoices         Invoice[]
-  docs             ProjectDocs?
-  signups          ProjectSignup[]
-  status           ProjectStatus?
-}
-
-model ProjectDocs {
-  projectId       String   @id
-  readmeMd        String?
-  notesMd         String   @default("")
-  brainstormingMd String   @default("")
-  updatedAt       DateTime @updatedAt
-  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model ProjectStatus {
-  projectId       String    @id
-  lastCommitSha   String?
-  lastCommitAt    DateTime?
-  lastDeployId    String?
-  lastDeployState String?
-  lastDeployAt    DateTime?
-  uptimePct       Decimal?  @db.Decimal(5, 2)
-  updatedAt       DateTime  @updatedAt
-  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model IntegrationEvent {
-  id         BigInt   @id @default(autoincrement())
-  projectId  String
-  source     String
-  type       String
-  payload    Json
-  occurredAt DateTime @default(now())
-  indexedAt  DateTime @default(now())
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([projectId, occurredAt(sort: Desc)])
-}
-
 model Client {
-  id      String          @id @default(cuid())
-  name    String
-  email   String?         @unique
-  signups ProjectSignup[]
-}
-
-model ProjectSignup {
-  id         BigInt   @id @default(autoincrement())
-  projectId  String
-  clientId   String?
-  email      String?
-  meta       Json?
-  signedUpAt DateTime @default(now())
-  client     Client?  @relation(fields: [clientId], references: [id])
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
-
-model Invoice {
-  id              String    @id @default(cuid())
-  projectId       String
-  title           String?
-  amountCents     Int
-  status          String    @default("draft")
-  stripeInvoiceId String?
-  issuedAt        DateTime?
-  paidAt          DateTime?
-  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  id            String          @id
+  name          String
+  email         String?         @unique
+  ProjectSignup ProjectSignup[]
 }
 
 model Expense {
@@ -101,13 +22,93 @@ model Expense {
   category    String?
   incurredAt  DateTime @default(now())
   createdAt   DateTime @default(now())
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model ExternalConnection {
-  id           String   @id @default(cuid())
+  id           String   @id
   provider     String
   accountLabel String?
   oauthMeta    Json?
   createdAt    DateTime @default(now())
+}
+
+model IntegrationEvent {
+  id         BigInt   @id @default(autoincrement())
+  projectId  String
+  source     String
+  type       String
+  payload    Json
+  occurredAt DateTime @default(now())
+  indexedAt  DateTime @default(now())
+  Project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, occurredAt(sort: Desc)])
+}
+
+model Invoice {
+  id              String    @id
+  projectId       String
+  title           String?
+  amountCents     Int
+  status          String    @default("draft")
+  stripeInvoiceId String?
+  issuedAt        DateTime?
+  paidAt          DateTime?
+  Project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id               String             @id
+  slug             String             @unique
+  name             String
+  description      String?
+  liveUrl          String?
+  repoFullName     String?
+  deployProvider   String?
+  deployExternalId String?
+  visibility       String             @default("private")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  previewImage     String?
+  completionPct    Int?               @default(0)
+  Expense          Expense[]
+  IntegrationEvent IntegrationEvent[]
+  Invoice          Invoice[]
+  ProjectDocs      ProjectDocs?
+  ProjectSignup    ProjectSignup[]
+  ProjectStatus    ProjectStatus?
+}
+
+model ProjectDocs {
+  projectId       String   @id
+  readmeMd        String?
+  notesMd         String   @default("")
+  brainstormingMd String   @default("")
+  updatedAt       DateTime
+  dbDiagramData   String?
+  Project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectSignup {
+  id         BigInt   @id @default(autoincrement())
+  projectId  String
+  clientId   String?
+  email      String?
+  meta       Json?
+  signedUpAt DateTime @default(now())
+  Client     Client?  @relation(fields: [clientId], references: [id])
+  Project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectStatus {
+  projectId       String    @id
+  lastCommitSha   String?
+  lastCommitAt    DateTime?
+  lastDeployId    String?
+  lastDeployState String?
+  lastDeployAt    DateTime?
+  uptimePct       Decimal?  @db.Decimal(5, 2)
+  updatedAt       DateTime
+  Project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }

@@ -9,12 +9,12 @@ export default async function MetaPage() {
   const [projects, totalEvents, recentEvents, invoices, expenses] = await Promise.all([
     prisma.project.findMany({
       include: { 
-        status: true,
+        ProjectStatus: true,
         _count: {
           select: {
-            events: true,
-            invoices: true,
-            expenses: true
+            IntegrationEvent: true,
+            Invoice: true,
+            Expense: true
           }
         }
       }
@@ -23,21 +23,21 @@ export default async function MetaPage() {
     prisma.integrationEvent.findMany({
       take: 20,
       orderBy: { occurredAt: "desc" },
-      include: { project: true }
+      include: { Project: true }
     }),
     prisma.invoice.findMany({
-      include: { project: true },
+      include: { Project: true },
       orderBy: { issuedAt: "desc" }
     }),
     prisma.expense.findMany({
-      include: { project: true },
+      include: { Project: true },
       orderBy: { incurredAt: "desc" }
     })
   ]);
 
   // Calculate analytics
   const totalProjects = projects.length;
-  const activeProjects = projects.filter(p => p.status?.lastCommitAt).length;
+  const activeProjects = projects.filter(p => p.ProjectStatus?.lastCommitAt).length;
   const totalRevenue = invoices
     .filter(inv => inv.status === "paid")
     .reduce((sum, inv) => sum + inv.amountCents, 0);
@@ -53,8 +53,8 @@ export default async function MetaPage() {
 
   // Project health
   const projectsWithIssues = projects.filter(p => {
-    const daysSinceCommit = p.status?.lastCommitAt ? 
-      (Date.now() - new Date(p.status.lastCommitAt).getTime()) / (1000 * 60 * 60 * 24) : 
+    const daysSinceCommit = p.ProjectStatus?.lastCommitAt ? 
+      (Date.now() - new Date(p.ProjectStatus.lastCommitAt).getTime()) / (1000 * 60 * 60 * 24) : 
       999;
     return daysSinceCommit > 7; // No commits in 7 days
   });

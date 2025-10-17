@@ -60,7 +60,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
         repoFullName: repoFullName || null,
         completionPct: validCompletionPct,
       },
-      include: { status: true }
+      include: { ProjectStatus: true }
     });
 
     return NextResponse.json(project);
@@ -80,9 +80,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     const project = await prisma.project.findUnique({
       where: { slug },
       include: { 
-        status: true, 
-        docs: true,
-        events: {
+        ProjectStatus: true, 
+        ProjectDocs: true,
+        IntegrationEvent: {
           orderBy: { occurredAt: "desc" },
           take: 10
         }

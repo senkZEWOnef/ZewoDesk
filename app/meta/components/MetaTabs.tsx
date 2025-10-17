@@ -354,7 +354,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       <div>
                         <div style={{ fontWeight: "500", marginBottom: "4px" }}>{project.name}</div>
                         <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                          {project._count.events} events • {project._count.invoices} invoices
+                          {project._count.IntegrationEvent} events • {project._count.Invoice} invoices
                         </div>
                       </div>
                       <div style={{ textAlign: "right", fontSize: "12px" }}>
@@ -615,7 +615,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                           <div style={{ fontWeight: "500" }}>
-                            {invoice.title || `Invoice for ${invoice.project.name}`}
+                            {invoice.title || `Invoice for ${invoice.Project.name}`}
                           </div>
                           <div style={{ fontWeight: "600" }}>
                             {formatCurrency(invoice.amountCents / 100)}
@@ -623,7 +623,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
                           <div style={{ color: "var(--text-secondary)" }}>
-                            {invoice.project.name}
+                            {invoice.Project.name}
                           </div>
                           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                             <span style={{ 
@@ -690,7 +690,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
                         <div style={{ color: "var(--text-secondary)" }}>
-                          {expense.project.name}
+                          {expense.Project.name}
                         </div>
                         <div style={{ display: "flex", gap: "8px" }}>
                           {expense.category && (
@@ -783,7 +783,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       </div>
                     </div>
                     <div style={{ fontSize: "14px", color: "var(--text-secondary)", marginBottom: "4px" }}>
-                      {event.project.name}
+                      {event.Project.name}
                     </div>
                     <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                       {new Date(event.occurredAt).toLocaleDateString()} at {new Date(event.occurredAt).toLocaleTimeString()}
