@@ -64,6 +64,7 @@ export async function POST(request: Request) {
       liveUrl: processedLiveUrl,
       repoFullName: repoFullName || null,
       completionPct: validCompletionPct,
+      deployProvider: "netlify", // Default to Netlify for all new projects
       updatedAt: new Date(),
       ProjectStatus: { create: { updatedAt: new Date() } },
       ProjectDocs: { create: { updatedAt: new Date() } },
