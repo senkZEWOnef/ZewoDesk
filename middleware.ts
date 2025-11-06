@@ -16,9 +16,23 @@ export function middleware(request: NextRequest) {
   }
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard', '/projects'];
+  const protectedRoutes = ['/dashboard'];
   
-  if (protectedRoutes.some(route => pathname.startsWith(route))) {
+  // Allow /projects in visitor mode (with ?visitor=true parameter)
+  if (pathname.startsWith('/projects')) {
+    const url = new URL(request.url);
+    const isVisitorMode = url.searchParams.get('visitor') === 'true';
+    
+    if (!isVisitorMode) {
+      // Check for auth token if not in visitor mode
+      const authToken = request.cookies.get('zewo_auth');
+      
+      if (!authToken || authToken.value !== 'authenticated') {
+        // Redirect to login if not authenticated
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    }
+  } else if (protectedRoutes.some(route => pathname.startsWith(route))) {
     // Check for auth token in cookies (for SSR)
     const authToken = request.cookies.get('zewo_auth');
     

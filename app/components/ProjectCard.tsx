@@ -18,9 +18,10 @@ interface ProjectCardProps {
       lastDeployState: string | null;
     } | null;
   };
+  visitorMode?: boolean;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, visitorMode = false }: ProjectCardProps) {
   const [showDeleteMenu, setShowDeleteMenu] = useState(false);
   const [isGeneratingScreenshot, setIsGeneratingScreenshot] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -124,7 +125,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   };
 
   return (
-    <Link href={`/projects/${project.slug}`} style={{ textDecoration: "none" }}>
+    <Link href={visitorMode ? "#" : `/projects/${project.slug}`} style={{ textDecoration: "none" }}>
       <article 
         className={`project-card ${project.previewImage ? 'project-card-with-preview' : ''}`}
         style={{ 
@@ -137,15 +138,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           })
         }}
       >
-        <div style={{
-          position: "absolute",
-          top: "12px",
-          right: "12px",
-          display: "flex",
-          gap: "8px",
-          opacity: 0.3,
-          transition: "all 0.2s ease"
-        }} className="project-actions">
+        {!visitorMode && (
+          <div style={{
+            position: "absolute",
+            top: "12px",
+            right: "12px",
+            display: "flex",
+            gap: "8px",
+            opacity: 0.3,
+            transition: "all 0.2s ease"
+          }} className="project-actions">
           {project.liveUrl && (
             <button
               onClick={handleGenerateScreenshot}
@@ -235,7 +237,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           >
             ×
           </button>
-        </div>
+          </div>
+        )}
         
         <div className="project-header">
           <div>
@@ -250,45 +253,49 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
         </div>
         
-        {/* Completion Progress Bar */}
-        <div style={{ marginBottom: "16px" }}>
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
-            alignItems: "center", 
-            marginBottom: "4px" 
-          }}>
-            <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Progress</span>
-            <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{project.completionPct || 0}%</span>
-          </div>
-          <div style={{
-            width: "100%",
-            height: "6px",
-            background: "var(--bg-tertiary)",
-            borderRadius: "3px",
-            overflow: "hidden"
-          }}>
-            <div style={{
-              width: `${project.completionPct || 0}%`,
-              height: "100%",
-              background: project.completionPct === 100 
-                ? "var(--accent-green)" 
-                : project.completionPct && project.completionPct > 50 
-                  ? "var(--accent-blue)" 
-                  : "var(--accent-purple)",
-              transition: "width 0.3s ease"
-            }} />
-          </div>
-        </div>
-        
-        <div className="project-stats" style={{ marginBottom: "16px" }}>
-          <div>Last commit: {project.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-          <div>Last deploy: {project.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-          <div>Deploy state: {project.ProjectStatus?.lastDeployState ?? "—"}</div>
-        </div>
+        {!visitorMode && (
+          <>
+            {/* Completion Progress Bar */}
+            <div style={{ marginBottom: "16px" }}>
+              <div style={{ 
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "center", 
+                marginBottom: "4px" 
+              }}>
+                <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Progress</span>
+                <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{project.completionPct || 0}%</span>
+              </div>
+              <div style={{
+                width: "100%",
+                height: "6px",
+                background: "var(--bg-tertiary)",
+                borderRadius: "3px",
+                overflow: "hidden"
+              }}>
+                <div style={{
+                  width: `${project.completionPct || 0}%`,
+                  height: "100%",
+                  background: project.completionPct === 100 
+                    ? "var(--accent-green)" 
+                    : project.completionPct && project.completionPct > 50 
+                      ? "var(--accent-blue)" 
+                      : "var(--accent-purple)",
+                  transition: "width 0.3s ease"
+                }} />
+              </div>
+            </div>
+            
+            <div className="project-stats" style={{ marginBottom: "16px" }}>
+              <div>Last commit: {project.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
+              <div>Last deploy: {project.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
+              <div>Deploy state: {project.ProjectStatus?.lastDeployState ?? "—"}</div>
+            </div>
+          </>
+        )}
 
         {/* Edit Form */}
-        {isEditing && (
+        {!visitorMode && isEditing && (
           <div 
             onClick={(e) => e.stopPropagation()}
             style={{

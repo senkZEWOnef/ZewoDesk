@@ -11,7 +11,7 @@ const PROJECTS_PER_PAGE = 12;
 export default async function ProjectsPage({ 
   searchParams 
 }: { 
-  searchParams: Promise<{ page?: string }> 
+  searchParams: Promise<{ page?: string; visitor?: string }> 
 }) {
   let projects = [];
   let totalProjects = 0;
@@ -19,6 +19,7 @@ export default async function ProjectsPage({
   
   const resolvedSearchParams = await searchParams;
   const currentPage = parseInt(resolvedSearchParams.page || '1');
+  const isVisitorMode = resolvedSearchParams.visitor === 'true';
   const skip = (currentPage - 1) * PROJECTS_PER_PAGE;
   
   try {
@@ -57,7 +58,7 @@ export default async function ProjectsPage({
           Projects
         </h1>
         <p style={{ color: "var(--text-secondary)", fontSize: "16px" }} className="page-description">
-          Manage all your projects from one place
+          {isVisitorMode ? "Browse Zewo's projects" : "Manage all your projects from one place"}
         </p>
       </div>
 
@@ -78,11 +79,11 @@ export default async function ProjectsPage({
         </div>
       )}
 
-      {!error && <ProjectForm />}
+      {!error && !isVisitorMode && <ProjectForm />}
 
       <div className="project-grid">
         {projects.map(p => (
-          <ProjectCard key={p.id} project={p} />
+          <ProjectCard key={p.id} project={p} visitorMode={isVisitorMode} />
         ))}
       </div>
 

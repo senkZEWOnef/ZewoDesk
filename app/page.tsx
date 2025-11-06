@@ -122,6 +122,37 @@ export default function LoginPage() {
           >
             {isLoading ? 'Verifying...' : 'Enter'}
           </button>
+          
+          <div style={{
+            marginTop: '24px',
+            paddingTop: '24px',
+            borderTop: '1px solid var(--border)'
+          }}>
+            <p style={{
+              color: 'var(--text-secondary)',
+              fontSize: '14px',
+              marginBottom: '16px'
+            }}>
+              Just want to browse projects?
+            </p>
+            <button
+              type="button"
+              onClick={() => router.push('/projects?visitor=true')}
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '14px',
+                fontWeight: '500',
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
+              }}
+            >
+              View Projects as Visitor
+            </button>
+          </div>
         </form>
       </div>
     </div>
