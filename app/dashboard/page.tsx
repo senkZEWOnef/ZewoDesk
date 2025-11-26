@@ -83,7 +83,7 @@ export default function DashboardPage() {
     if (button.secure) {
       // Handle secure vault access
       const password = prompt('Enter passcode to access secure vault:');
-      if (password === 'Poesie509$$') {
+      if (password === 'Poesie509$$$') {
         router.push(button.url);
       } else if (password !== null) {
         alert('Invalid passcode');
