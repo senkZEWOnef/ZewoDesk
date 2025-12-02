@@ -33,76 +33,119 @@ export default function LoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       background: 'var(--bg-primary)',
-      padding: '20px'
+      padding: 'var(--space-lg)',
+      position: 'relative'
     }}>
+      {/* Background Pattern */}
       <div style={{
-        background: 'var(--bg-secondary)',
-        padding: '48px',
-        borderRadius: '16px',
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)',
+        zIndex: 1
+      }} />
+      
+      <div style={{
+        background: 'var(--bg-elevated)',
+        padding: 'var(--space-2xl)',
+        borderRadius: 'var(--radius-xl)',
         border: '1px solid var(--border)',
         textAlign: 'center',
-        maxWidth: '400px',
+        maxWidth: '440px',
         width: '100%',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+        boxShadow: 'var(--shadow-xl)',
+        position: 'relative',
+        zIndex: 2,
+        backdropFilter: 'blur(20px)'
       }}>
         <div style={{
-          width: '64px',
-          height: '64px',
+          width: '80px',
+          height: '80px',
           background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
-          borderRadius: '16px',
+          borderRadius: 'var(--radius-lg)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontWeight: 'bold',
-          fontSize: '32px',
-          margin: '0 auto 24px auto'
+          fontSize: '40px',
+          margin: '0 auto var(--space-xl) auto',
+          boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
+          position: 'relative'
         }}>
-          Z
+          <span style={{
+            background: 'linear-gradient(135deg, #ffffff, #f0f9ff)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>Z</span>
         </div>
         
         <h1 style={{
-          fontSize: '28px',
+          fontSize: '2rem',
           fontWeight: '700',
-          marginBottom: '8px',
-          background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-purple))',
+          marginBottom: 'var(--space-sm)',
+          background: 'linear-gradient(135deg, var(--accent-blue-light), var(--accent-purple-light))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text'
+          backgroundClip: 'text',
+          letterSpacing: '-0.02em'
         }}>
           Welcome back Zewo
         </h1>
         
         <p style={{
-          color: 'var(--text-secondary)',
-          marginBottom: '32px',
-          fontSize: '16px'
+          color: 'var(--text-tertiary)',
+          marginBottom: 'var(--space-2xl)',
+          fontSize: '1rem',
+          lineHeight: '1.5'
         }}>
-          Please enter the code
+          Enter your access code to continue
         </p>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="password"
-            value={passcode}
-            onChange={(e) => setPasscode(e.target.value)}
-            placeholder="Enter passcode"
-            style={{
-              width: '100%',
-              marginBottom: '16px',
-              padding: '16px',
-              fontSize: '16px',
-              textAlign: 'center',
-              letterSpacing: '2px'
-            }}
-            disabled={isLoading}
-            autoFocus
-          />
+        <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', marginBottom: 'var(--space-lg)' }}>
+            <input
+              type="password"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              placeholder="Enter passcode"
+              style={{
+                width: '100%',
+                padding: 'var(--space-lg) var(--space-xl)',
+                fontSize: '1.125rem',
+                textAlign: 'center',
+                letterSpacing: '0.2em',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--bg-secondary)',
+                color: 'var(--text-primary)',
+                transition: 'var(--transition)',
+                fontFamily: 'ui-monospace, monospace'
+              }}
+              disabled={isLoading}
+              autoFocus
+            />
+            {isLoading && (
+              <div style={{
+                position: 'absolute',
+                right: 'var(--space-lg)',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                animation: 'spin 1s linear infinite'
+              }}>
+                ⟳
+              </div>
+            )}
+          </div>
           
           {error && (
             <div style={{
-              color: 'var(--accent-red)',
-              marginBottom: '16px',
-              fontSize: '14px'
+              color: 'var(--accent-red-light)',
+              marginBottom: 'var(--space-lg)',
+              fontSize: '0.875rem',
+              padding: 'var(--space-md)',
+              background: 'rgba(239, 68, 68, 0.1)',
+              borderRadius: 'var(--radius)',
+              border: '1px solid rgba(239, 68, 68, 0.2)'
             }}>
               {error}
             </div>
@@ -111,46 +154,63 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading || !passcode}
+            className={`btn btn-lg ${isLoading || !passcode ? '' : ''}`}
             style={{
               width: '100%',
-              padding: '16px',
-              fontSize: '16px',
-              fontWeight: '600',
               opacity: isLoading || !passcode ? 0.5 : 1,
-              cursor: isLoading || !passcode ? 'not-allowed' : 'pointer'
+              cursor: isLoading || !passcode ? 'not-allowed' : 'pointer',
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
-            {isLoading ? 'Verifying...' : 'Enter'}
+            <span style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: 'var(--space-sm)' 
+            }}>
+              {isLoading ? (
+                <>
+                  <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span>
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <span>→</span>
+                  Enter ZewoDesk
+                </>
+              )}
+            </span>
           </button>
           
           <div style={{
-            marginTop: '24px',
-            paddingTop: '24px',
+            marginTop: 'var(--space-xl)',
+            paddingTop: 'var(--space-xl)',
             borderTop: '1px solid var(--border)'
           }}>
             <p style={{
-              color: 'var(--text-secondary)',
-              fontSize: '14px',
-              marginBottom: '16px'
+              color: 'var(--text-tertiary)',
+              fontSize: '0.875rem',
+              marginBottom: 'var(--space-lg)',
+              lineHeight: '1.4'
             }}>
-              Just want to browse projects?
+              Just browsing? View the public portfolio
             </p>
             <button
               type="button"
               onClick={() => router.push('/projects?visitor=true')}
+              className="btn-ghost"
               style={{
                 width: '100%',
-                padding: '12px',
-                fontSize: '14px',
-                fontWeight: '500',
-                background: 'transparent',
-                border: '1px solid var(--border)',
-                borderRadius: '8px',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 'var(--space-sm)',
+                fontSize: '0.875rem'
               }}
             >
-              View Projects as Visitor
+              <span>👀</span>
+              View Public Projects
             </button>
           </div>
         </form>

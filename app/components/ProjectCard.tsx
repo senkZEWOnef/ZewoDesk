@@ -64,21 +64,35 @@ export default function ProjectCard({ project, visitorMode = false }: ProjectCar
     e.preventDefault();
     e.stopPropagation();
     
-    if (confirm(`Are you sure you want to delete "${project.name}"?`)) {
-      try {
-        const response = await fetch(`/api/projects/${project.slug}`, {
-          method: "DELETE"
-        });
-        
-        if (response.ok) {
-          window.location.reload();
-        } else {
-          alert("Failed to delete project");
-        }
-      } catch (error) {
-        console.error("Delete failed:", error);
+    // First confirm deletion
+    if (!confirm(`Are you sure you want to delete "${project.name}"?`)) {
+      return;
+    }
+
+    // Then require password
+    const password = prompt('Enter admin password to confirm deletion:');
+    if (password !== 'Poesie509$$$') {
+      if (password !== null) {
+        alert('Incorrect password. Deletion cancelled.');
+      }
+      return;
+    }
+
+    // Proceed with deletion
+    try {
+      const response = await fetch(`/api/projects/${project.slug}`, {
+        method: "DELETE"
+      });
+      
+      if (response.ok) {
+        alert(`"${project.name}" has been deleted successfully.`);
+        window.location.reload();
+      } else {
         alert("Failed to delete project");
       }
+    } catch (error) {
+      console.error("Delete failed:", error);
+      alert("Failed to delete project");
     }
   };
 
@@ -125,186 +139,193 @@ export default function ProjectCard({ project, visitorMode = false }: ProjectCar
   };
 
   return (
-    <Link href={visitorMode ? "#" : `/projects/${project.slug}`} style={{ textDecoration: "none" }}>
-      <article 
-        className={`project-card ${project.previewImage ? 'project-card-with-preview' : ''}`}
-        style={{ 
-          position: "relative",
-          ...(project.previewImage && {
-            backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${project.previewImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'top center',
-            color: '#ffffff'
-          })
-        }}
-      >
-        {!visitorMode && (
-          <div style={{
-            position: "absolute",
-            top: "12px",
-            right: "12px",
-            display: "flex",
-            gap: "8px",
-            opacity: 0.3,
-            transition: "all 0.2s ease"
-          }} className="project-actions">
-          {project.liveUrl && (
-            <button
-              onClick={handleGenerateScreenshot}
-              disabled={isGeneratingScreenshot}
-              style={{
-                background: "transparent",
-                border: "1px solid var(--border)",
-                color: project.previewImage ? "var(--text-muted)" : "var(--accent-blue)",
-                borderRadius: "4px",
-                width: "24px",
-                height: "24px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: isGeneratingScreenshot ? "not-allowed" : "pointer",
-                fontSize: "12px",
-                transition: "all 0.2s ease"
-              }}
-              onMouseEnter={(e) => {
-                if (!isGeneratingScreenshot) {
-                  e.currentTarget.style.borderColor = "var(--accent-blue)";
-                  e.currentTarget.style.color = "var(--accent-blue)";
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.color = project.previewImage ? "var(--text-muted)" : "var(--accent-blue)";
-              }}
-              title={isGeneratingScreenshot ? "Generating..." : "Generate screenshot"}
-            >
-              {isGeneratingScreenshot ? "⏳" : "📸"}
-            </button>
-          )}
+    <article 
+      className={`project-card ${project.previewImage ? 'project-card-with-preview' : ''}`}
+      style={{ 
+        position: "relative",
+        textDecoration: "none",
+        cursor: "pointer",
+        ...(project.previewImage && {
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url(${project.previewImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'top center',
+          color: '#ffffff'
+        })
+      }}
+    >
+      {/* Clickable overlay for navigation - only when not in visitor mode */}
+      {!visitorMode && (
+        <Link 
+          href={`/projects/${project.slug}`} 
+          style={{ 
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            textDecoration: 'none'
+          }}
+        />
+      )}
+      {!visitorMode && (
+        <div style={{
+          position: "absolute",
+          top: "var(--space-lg)",
+          right: "var(--space-lg)",
+          display: "flex",
+          gap: "var(--space-sm)",
+          opacity: 0.3,
+          transition: "var(--transition)",
+          zIndex: 20
+        }} className="project-actions">
+        {project.liveUrl && (
           <button
-            onClick={handleEdit}
+            type="button"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleGenerateScreenshot(e);
+            }}
+            disabled={isGeneratingScreenshot}
+            className="btn-ghost btn-sm"
             style={{
-              background: "transparent",
-              border: "1px solid var(--border)",
-              color: "var(--text-muted)",
-              borderRadius: "4px",
-              width: "24px",
-              height: "24px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontSize: "12px",
-              transition: "all 0.2s ease"
+              minWidth: "auto",
+              width: "32px",
+              height: "32px",
+              padding: 0,
+              fontSize: "0.875rem",
+              backdropFilter: "blur(10px)",
+              background: "var(--bg-glass)",
+              position: "relative",
+              zIndex: 21
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--accent-green)";
-              e.currentTarget.style.color = "var(--accent-green)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.color = "var(--text-muted)";
-            }}
-            title="Edit project"
+            title={isGeneratingScreenshot ? "Generating..." : "Generate screenshot"}
           >
-            ✏️
+            {isGeneratingScreenshot ? "⏳" : "📸"}
           </button>
-          <button
-            onClick={handleDelete}
-            style={{
-              background: "transparent",
-              border: "1px solid var(--border)",
-              color: "var(--text-muted)",
-              borderRadius: "4px",
-              width: "24px",
-              height: "24px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              fontSize: "12px",
-              transition: "all 0.2s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "var(--accent-red)";
-              e.currentTarget.style.color = "var(--accent-red)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "var(--border)";
-              e.currentTarget.style.color = "var(--text-muted)";
-            }}
-            title="Delete project"
-          >
-            ×
-          </button>
-          </div>
         )}
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handleEdit(e);
+          }}
+          className="btn-ghost btn-sm"
+          style={{
+            minWidth: "auto",
+            width: "32px",
+            height: "32px",
+            padding: 0,
+            fontSize: "0.875rem",
+            backdropFilter: "blur(10px)",
+            background: "var(--bg-glass)",
+            position: "relative",
+            zIndex: 21
+          }}
+          title="Edit project"
+        >
+          ✏️
+        </button>
+        <button
+          type="button"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handleDelete(e);
+          }}
+          className="btn-danger btn-sm"
+          style={{
+            minWidth: "auto",
+            width: "32px",
+            height: "32px",
+            padding: 0,
+            fontSize: "0.875rem",
+            backdropFilter: "blur(10px)",
+            background: "rgba(239, 68, 68, 0.8)",
+            position: "relative",
+            zIndex: 21
+          }}
+          title="Delete project"
+        >
+          ×
+        </button>
+        </div>
+      )}
         
+      {/* Project content with proper z-index */}
+      <div style={{ position: 'relative', zIndex: 10, pointerEvents: 'none' }}>
         <div className="project-header">
-          <div>
+          <div style={{ flex: 1 }}>
             <h2 className="project-title">{project.name}</h2>
             <div className="project-slug">{project.slug}</div>
           </div>
           <div className="project-stats">
-            <div>
-              <span className={`status-indicator ${project.ProjectStatus?.lastCommitAt ? 'status-active' : 'status-inactive'}`}></span>
-              {project.ProjectStatus?.lastCommitAt ? 'Active' : 'No commits'}
+            <div className={`status-indicator ${project.ProjectStatus?.lastCommitAt ? 'status-active' : 'status-inactive'}`}>
+              {project.ProjectStatus?.lastCommitAt ? 'Active' : 'Inactive'}
             </div>
           </div>
         </div>
         
         {!visitorMode && (
           <>
-            {/* Completion Progress Bar */}
-            <div style={{ marginBottom: "16px" }}>
-              <div style={{ 
-                display: "flex", 
-                justifyContent: "space-between", 
-                alignItems: "center", 
-                marginBottom: "4px" 
-              }}>
-                <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>Progress</span>
-                <span style={{ fontSize: "12px", color: "var(--text-secondary)" }}>{project.completionPct || 0}%</span>
+            {/* Modern Completion Progress */}
+            <div className="project-completion">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{ width: `${project.completionPct || 0}%` }}
+                />
               </div>
-              <div style={{
-                width: "100%",
-                height: "6px",
-                background: "var(--bg-tertiary)",
-                borderRadius: "3px",
-                overflow: "hidden"
-              }}>
-                <div style={{
-                  width: `${project.completionPct || 0}%`,
-                  height: "100%",
-                  background: project.completionPct === 100 
-                    ? "var(--accent-green)" 
-                    : project.completionPct && project.completionPct > 50 
-                      ? "var(--accent-blue)" 
-                      : "var(--accent-purple)",
-                  transition: "width 0.3s ease"
-                }} />
-              </div>
+              <span className="progress-text">{project.completionPct || 0}%</span>
             </div>
             
-            <div className="project-stats" style={{ marginBottom: "16px" }}>
-              <div>Last commit: {project.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-              <div>Last deploy: {project.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19).replace('T', ' ') ?? "—"}</div>
-              <div>Deploy state: {project.ProjectStatus?.lastDeployState ?? "—"}</div>
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "1fr 1fr", 
+              gap: "var(--space-sm)", 
+              marginBottom: "var(--space-lg)",
+              fontSize: "0.75rem",
+              color: "var(--text-tertiary)"
+            }}>
+              <div>
+                <span style={{ fontWeight: "500" }}>Last commit:</span><br />
+                {project.ProjectStatus?.lastCommitAt ? new Date(project.ProjectStatus.lastCommitAt).toLocaleDateString() : "—"}
+              </div>
+              <div>
+                <span style={{ fontWeight: "500" }}>Deploy:</span><br />
+                {project.ProjectStatus?.lastDeployState ?? "—"}
+              </div>
             </div>
           </>
         )}
+      </div>
 
-        {/* Edit Form */}
-        {!visitorMode && isEditing && (
-          <div 
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: "var(--bg-tertiary)",
-              padding: "16px",
-              borderRadius: "8px",
-              marginBottom: "16px",
-              border: "1px solid var(--border)"
-            }}>
+      {/* Edit Form with proper z-index */}
+      {!visitorMode && isEditing && (
+        <div 
+          onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{
+            background: "var(--bg-tertiary)",
+            padding: "var(--space-lg)",
+            borderRadius: "var(--radius-md)",
+            marginBottom: "var(--space-lg)",
+            border: "1px solid var(--border)",
+            position: "relative",
+            zIndex: 30,
+            pointerEvents: "auto"
+          }}>
             <h4 style={{ marginBottom: "12px", fontSize: "14px", color: "var(--text-primary)" }}>Edit Project</h4>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <input
@@ -378,33 +399,44 @@ export default function ProjectCard({ project, visitorMode = false }: ProjectCar
           </div>
         )}
 
-        <div className="project-links">
-          {project.repoFullName && (
-            <div 
-              className="project-link"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(`https://github.com/${project.repoFullName}`, '_blank');
-              }}
-            >
-              <span>📁</span>
-              {project.repoFullName}
-            </div>
-          )}
-          {project.liveUrl && (
-            <div 
-              className="project-link"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(project.liveUrl!, '_blank');
-              }}
-            >
-              <span>🌐</span>
-              Live Site
-            </div>
-          )}
-        </div>
-      </article>
-    </Link>
+      {/* Project Links with proper z-index */}
+      <div 
+        className="project-links"
+        style={{
+          position: "relative",
+          zIndex: 15,
+          pointerEvents: "auto"
+        }}
+      >
+        {project.repoFullName && (
+          <div 
+            className="project-link"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              window.open(`https://github.com/${project.repoFullName}`, '_blank');
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <span>📁</span>
+            {project.repoFullName}
+          </div>
+        )}
+        {project.liveUrl && (
+          <div 
+            className="project-link"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              window.open(project.liveUrl!, '_blank');
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <span>🌐</span>
+            Live Site
+          </div>
+        )}
+      </div>
+    </article>
   );
 }
