@@ -73,15 +73,31 @@ export default async function MetaPage() {
       overdueInvoices: overdueInvoices.length,
       deploymentFailures: recentEvents.filter(e => e.type === "deployment_failed").length
     },
-    recent: recentEvents
+    recent: recentEvents.map(event => ({
+      ...event,
+      project: { name: event.Project.name, slug: event.Project.slug }
+    }))
   };
 
   return (
     <MetaTabs 
       analytics={analytics}
-      projects={projects}
-      invoices={invoices}
-      expenses={expenses}
+      projects={projects.map(project => ({
+        ...project,
+        _count: {
+          events: project._count.IntegrationEvent,
+          invoices: project._count.Invoice,
+          expenses: project._count.Expense
+        }
+      }))}
+      invoices={invoices.map(invoice => ({
+        ...invoice,
+        project: { name: invoice.Project.name, slug: invoice.Project.slug }
+      }))}
+      expenses={expenses.map(expense => ({
+        ...expense,
+        project: { name: expense.Project.name, slug: expense.Project.slug }
+      }))}
     />
   );
 }

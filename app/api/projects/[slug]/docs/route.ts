@@ -28,7 +28,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ sl
         projectId: project.id,
         notesMd: body.notesMd || "",
         brainstormingMd: body.brainstormingMd || "",
-        dbDiagramData: body.dbDiagramData || null
+        dbDiagramData: body.dbDiagramData || null,
+        updatedAt: new Date()
       }
     });
 

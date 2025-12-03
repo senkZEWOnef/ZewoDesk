@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 export default async function Page() {
   const projects = await prisma.project.findMany({
-    include: { status: true },
+    include: { ProjectStatus: true },
     orderBy: { createdAt: "desc" },
   });
 
@@ -41,13 +41,13 @@ export default async function Page() {
               <div style={{ textAlign: "right" }}>
                 <div>
                   Last commit:{" "}
-                  {p.status?.lastCommitAt?.toISOString()?.slice(0, 19) ?? "—"}
+                  {p.ProjectStatus?.lastCommitAt?.toISOString()?.slice(0, 19) ?? "—"}
                 </div>
                 <div>
                   Last deploy:{" "}
-                  {p.status?.lastDeployAt?.toISOString()?.slice(0, 19) ?? "—"}
+                  {p.ProjectStatus?.lastDeployAt?.toISOString()?.slice(0, 19) ?? "—"}
                 </div>
-                <div>Deploy state: {p.status?.lastDeployState ?? "—"}</div>
+                <div>Deploy state: {p.ProjectStatus?.lastDeployState ?? "—"}</div>
               </div>
             </div>
             {p.liveUrl && (

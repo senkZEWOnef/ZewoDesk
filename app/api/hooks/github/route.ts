@@ -39,7 +39,8 @@ export async function POST(request: Request) {
       create: {
         projectId: project.id,
         lastCommitSha: head_commit.id,
-        lastCommitAt: new Date(head_commit.timestamp)
+        lastCommitAt: new Date(head_commit.timestamp),
+        updatedAt: new Date()
       }
     });
 

@@ -29,7 +29,7 @@ interface MetaTabsProps {
     id: string;
     name: string;
     slug: string;
-    status: {
+    ProjectStatus: {
       lastCommitAt: Date | null;
       lastDeployAt: Date | null;
       lastDeployState: string | null;
@@ -354,17 +354,17 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       <div>
                         <div style={{ fontWeight: "500", marginBottom: "4px" }}>{project.name}</div>
                         <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                          {project._count.IntegrationEvent} events • {project._count.Invoice} invoices
+                          {project._count.events} events • {project._count.invoices} invoices
                         </div>
                       </div>
                       <div style={{ textAlign: "right", fontSize: "12px" }}>
                         <div style={{ 
-                          color: project.status?.lastCommitAt ? "var(--accent-green)" : "var(--text-muted)"
+                          color: project.ProjectStatus?.lastCommitAt ? "var(--accent-green)" : "var(--text-muted)"
                         }}>
-                          {getDaysAgo(project.status?.lastCommitAt)}
+                          {getDaysAgo(project.ProjectStatus?.lastCommitAt)}
                         </div>
                         <div style={{ color: "var(--text-muted)" }}>
-                          {project.status?.lastDeployState || "No deploys"}
+                          {project.ProjectStatus?.lastDeployState || "No deploys"}
                         </div>
                       </div>
                     </div>
@@ -497,11 +497,11 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
               overflow: "hidden"
             }}>
               {projects.map((project, i) => {
-                const daysSinceCommit = project.status?.lastCommitAt ? 
-                  (Date.now() - new Date(project.status.lastCommitAt).getTime()) / (1000 * 60 * 60 * 24) : 
+                const daysSinceCommit = project.ProjectStatus?.lastCommitAt ? 
+                  (Date.now() - new Date(project.ProjectStatus.lastCommitAt).getTime()) / (1000 * 60 * 60 * 24) : 
                   999;
                 const isStale = daysSinceCommit > 7;
-                const deployStatus = project.status?.lastDeployState;
+                const deployStatus = project.ProjectStatus?.lastDeployState;
                 const hasIssues = isStale || deployStatus === "failed";
 
                 return (
@@ -520,7 +520,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                           {project.name}
                         </div>
                         <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                          Last commit: {getDaysAgo(project.status?.lastCommitAt)}
+                          Last commit: {getDaysAgo(project.ProjectStatus?.lastCommitAt)}
                         </div>
                       </div>
                       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -615,7 +615,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
                           <div style={{ fontWeight: "500" }}>
-                            {invoice.title || `Invoice for ${invoice.Project.name}`}
+                            {invoice.title || `Invoice for ${invoice.project.name}`}
                           </div>
                           <div style={{ fontWeight: "600" }}>
                             {formatCurrency(invoice.amountCents / 100)}
@@ -623,7 +623,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                         </div>
                         <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
                           <div style={{ color: "var(--text-secondary)" }}>
-                            {invoice.Project.name}
+                            {invoice.project.name}
                           </div>
                           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                             <span style={{ 
@@ -690,7 +690,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       </div>
                       <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
                         <div style={{ color: "var(--text-secondary)" }}>
-                          {expense.Project.name}
+                          {expense.project.name}
                         </div>
                         <div style={{ display: "flex", gap: "8px" }}>
                           {expense.category && (
@@ -783,7 +783,7 @@ export default function MetaTabs({ analytics, projects, invoices, expenses }: Me
                       </div>
                     </div>
                     <div style={{ fontSize: "14px", color: "var(--text-secondary)", marginBottom: "4px" }}>
-                      {event.Project.name}
+                      {event.project.name}
                     </div>
                     <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                       {new Date(event.occurredAt).toLocaleDateString()} at {new Date(event.occurredAt).toLocaleTimeString()}
