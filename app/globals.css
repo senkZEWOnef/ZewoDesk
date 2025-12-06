@@ -471,6 +471,15 @@ button:active, .btn:active {
   }
 }
 
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 .project-card {
   animation: fadeInUp 0.5s ease forwards;
 }
